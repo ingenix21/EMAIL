@@ -1,0 +1,778 @@
+<html>
+<head>
+ <title>Correo Electronico</title>
+
+<!-- Fuerza el Juego de Caracteres UTF-8 en los eMails -->
+<meta charset="UTF-8">
+
+<!--sii.load jqm_header -->
+<link  href="../js/jquery/plugin/summernote/summernote-lite-bs3.css?version=1.67" rel="stylesheet" />
+<link  href="../js/jquery-mobile/awesome/jqm-font-awesome-isvg-ipng.min.css?version=1.67" rel="stylesheet" />
+
+ <div data-role="page" id="EMAIL" data-dom-cache="true">
+
+  <div data-role="header" data-position="fixed" data-tap-toggle="false" data-theme="b">
+   <h1>fwMail</h1>
+   <a href="#Panel" data-icon="bars" data-iconpos="notext" title="Menú de Opciones" class="ui-btn-right">Menú</a>
+  </div><!-- /header -->
+
+  <div data-role="main" class="ui-content">
+
+   <ul id="eMails_account" data-role="listview" data-inset="true" data-theme="a" data-mini="true" data-filter="true" data-split-icon="edit" data-input="#search"></ul>
+
+  </div><!-- /main -->
+
+  <div id="Panel" data-role="panel" data-position-fixed="true" data-display="reveal" data-position="right">
+   <ul data-role="listview" style="padding-left:10px">
+
+    <li data-icon="back" data-theme="b" title="Cerrar Panel  ( Esc )"
+     ><a data-rel="close" name="Panel_option1" href="#"
+     >Menú</a></li>
+
+    <li title="Configurar nuevas Cuentas de Correo Electronico" data-icon="edit"
+     ><a data-rel="close" name="Panel_option2" href="javascript:Load_eMails_Edit_Account('')"
+     >Agregar Cuenta</a></li>
+
+    <li title="Borra la Base de Datos de Cuentas de Correo" data-icon="recycle"
+     ><a data-rel="close" name="Panel_option3" href="javascript:localStorage.removeItem('eMails');top.window.location.reload(true)"
+     >Inicializar DB</a></li>
+
+    <li title="Ayuda al Usuario" data-icon="info"
+     ><a data-rel="close" name="Panel_Help" href="#EMAIL_hlp"
+     >Ayuda</a></li>
+
+    <li title="Cerrar Ventana  ( Esc + Esc )" data-icon="delete"
+     ><a data-rel="close" name="Panel_option9" href="javascript:KEYS_27(KEYS_27('close'));"
+     >Salir</a></li>
+
+   </ul>
+
+  </div><!-- /panel -->
+
+ </div><!-- /page EMAIL -->
+
+ <div data-role="page" id="EMAIL_Box" data-dom-cache="true">
+
+  <div data-role="header" data-position="fixed" data-tap-toggle="false" data-theme="b">
+   <a href="#" data-icon="back" data-iconpos="notext" title="Volver Atras" onclick="KEYS_27();">back</a>
+
+   <h1>Buzones & Carpetas</h1>
+   <a href="#Panel_Box" data-icon="bars" data-iconpos="notext" title="Menú de Opciones" class="ui-btn-right">Menú</a>
+<!--   <input name="search_Box" id="search_Box" data-type="search" placeholder="Busqueda en" data-theme="a"> -->
+   
+  </div><!-- /header -->
+
+  <div data-role="main" id="" class="ui-content">
+
+   <div id="EMAIL_Box_content">
+   </div>
+
+  </div><!-- /main -->
+
+  <div id="Panel_Box" data-role="panel" data-position-fixed="true" data-display="reveal" data-position="right">
+   <ul data-role="listview" style="padding-left:10px">
+
+    <li data-icon="back" data-theme="b" title="Cerrar Panel  ( Esc )"
+     ><a data-rel="close" name="Panel_Box_option1" href="#"
+     >Menú</a></li>
+
+    <li title="Actualizar los Mensajes Recibidos." data-icon="recycle"
+     ><a data-rel="close" name="Panel_Box_NewMsg" href="javascript:Reset_eMails(0)"
+     >Recargar Carpetas</a></li>
+
+    <li title="Ayuda al Usuario" data-icon="info"
+     ><a data-rel="close" name="Panel_Box_Help" href="#EMAIL_Box_hlp"
+     >Ayuda</a></li>
+
+   </ul>
+
+  </div><!-- /panel -->
+
+  <div data-role="footer" data-position="fixed" data-tap-toggle="false" data-theme="b" class="mesgSelect">
+
+   <div data-role="navbar">
+
+    <ul class="Footer_Box_newMail">
+
+     <li><input type="button" name="Footer_Box_newMails"  data-icon="fa-plus"  data-iconpos="right" onclick="Load_eMails_Edit_Mail('','')" value="Redactar Nuevo Correo"></li>
+
+    </ul>
+
+    <ul class="Footer_Box_checked" style="display:none">
+
+     <li><input type="button" name="Footer_Box_checkToggle"  data-icon="recycle-yellow"  data-iconpos="top" onclick="check_eMails('', 'toggle')" value="Invertir Seleccion"></li>
+
+     <li><input type="button" name="Footer_Box_checkAll"  data-icon="check-green" data-iconpos="top" onclick="check_eMails('', 'all')" value="Seleccionar Todo"></li>
+
+     <li><input type="button" name="Footer_Box_delMails"  data-icon="delete-red"  data-iconpos="top" onclick="delete_eMails()" value="Eliminar Mensajes"></li>
+
+    </ul>
+
+   </div><!-- /navbar -->
+
+  </div><!-- /footer -->
+
+ </div><!-- /page EMAIL_Box -->
+
+ <div data-role="page" id="EMAIL_List" data-dom-cache="true">
+
+  <div data-role="header" data-position="fixed" data-tap-toggle="false" data-theme="b">
+   <a href="#" data-icon="back" data-iconpos="notext" title="Volver Atras" onclick="KEYS_27();">back</a>
+
+   <h1>Lista de Correos</h1>
+   <a href="#Panel_List" data-icon="bars" data-iconpos="notext" title="Menú de Opciones" class="ui-btn-right">Menú</a>
+   <input name="search_List" id="search_List" data-type="search" placeholder="Busqueda en" data-theme="a">
+   
+  </div><!-- /header -->
+
+  <div data-role="main" id="" class="ui-content">
+
+   <div id="EMAIL_List_content">
+   </div>
+
+  </div><!-- /main -->
+
+  <div id="Panel_List" data-role="panel" data-position-fixed="true" data-display="reveal" data-position="right">
+   <ul data-role="listview" style="padding-left:10px">
+
+    <li data-icon="back" data-theme="b" title="Cerrar Panel  ( Esc )"
+     ><a data-rel="close" name="Panel_List_option1" href="#"
+     >Menú</a></li>
+
+    <li title="Ordenar los Mensajes por Fecha." class="ui-nodisc-icon"
+     ><a data-rel="close" name="Panel_List_ByDate" href="javascript:Sort_eMails('Date');"
+     >Ordenar por Fecha</a></li>
+
+    <li title="Ordenar los Mensajes por Remitente." class="ui-nodisc-icon"
+     ><a data-rel="close" name="Panel_List_ByFrom" href="javascript:Sort_eMails('From');"
+     >Ordenar por Remitente</a></li>
+
+    <li title="Ordenar los Mensajes por Remitente." class="ui-nodisc-icon"
+     ><a data-rel="close" name="Panel_List_ByTo"   href="javascript:Sort_eMails('To');"
+     >Ordenar por Destinatario</a></li>
+
+    <li title="Ordenar los Mensajes por Remitente." class="ui-nodisc-icon"
+     ><a data-rel="close" name="Panel_List_BySubject" href="javascript:Sort_eMails('Subject');"
+     >Ordenar por Asunto</a></li>
+
+    <li title="Ordenar los Mensajes por Remitente." class="ui-nodisc-icon"
+     ><a data-rel="close" name="Panel_List_ByContent" href="javascript:Sort_eMails('Content');"
+     >Ordenar por Contenido</a></li>
+
+    <li title="Alterna entre Orden Descendente y/o Ascendente."
+     ><a data-rel="close" name="Panel_List_reverse" href="javascript:toggleOrder();"
+     >Alternar Orden</a></li>
+
+    <li title="Revisar si hay nuevos Mensajes." data-icon="arrow-l"
+     ><a data-rel="close" name="Panel_List_NewMsg" href="javascript:review_eMails(false)"
+     >Nuevos Mensajes</a></li>
+
+    <li title="Actualizar los Mensajes Recibidos." data-icon="recycle"
+     ><a data-rel="close" name="Panel_List_NewMsg" href="javascript:Reset_eMails(1)"
+     >Recargar Mensajes</a></li>
+
+    <li title="Ayuda al Usuario" data-icon="info"
+     ><a data-rel="close" name="Panel_List_Help" href="#EMAIL_List_hlp"
+     >Ayuda</a></li>
+
+   </ul>
+
+  </div><!-- /panel -->
+
+  <div data-role="footer" data-position="fixed" data-tap-toggle="false" data-theme="b" class="mesgSelect">
+
+   <div data-role="navbar">
+
+    <ul class="Footer_List_newMail">
+
+     <li><input type="button" name="Footer_List_newMails"  data-icon="fa-plus"  data-iconpos="right" onclick="Load_eMails_Edit_Mail('','')" value="Redactar Nuevo Correo"></li>
+
+    </ul>
+
+    <ul class="Footer_List_checked" style="display:none">
+
+     <li><input type="button" name="Footer_List_checkToggle"  data-icon="recycle-yellow"  data-iconpos="top" onclick="check_eMails('', 'toggle')" value="Invertir Seleccion"></li>
+
+     <li><input type="button" name="Footer_List_checkAll"  data-icon="check-green" data-iconpos="top" onclick="check_eMails('', 'all')" value="Seleccionar Todo"></li>
+
+     <li><input type="button" name="Footer_List_delMails"  data-icon="delete-red"  data-iconpos="top" onclick="delete_eMails()" value="Eliminar Mensajes"></li>
+
+    </ul>
+
+   </div><!-- /navbar -->
+
+  </div><!-- /footer -->
+
+ </div><!-- /page EMAIL_List -->
+
+ <div data-role="page" id="EMAIL_View" data-dom-cache="true">
+
+  <div data-role="header" data-position="fixed" data-tap-toggle="false" data-theme="b">
+   <a href="#" data-icon="back" data-iconpos="notext" title="Volver Atras" onclick="KEYS_27();">back</a>
+   <h1>Correo Electronico</h1>
+   <a href="#Panel_View" data-icon="bars" data-iconpos="notext" title="Menú de Opciones" class="ui-btn-right">Menú</a>
+  </div><!-- /header -->
+
+  <div data-role="main" id="EMAIL_View_main" class="ui-content">
+
+   <div id="EMAIL_View_content" style="overflow-y: hidden; overflow-x: auto; display:block; border:0px groove;" class="printme">
+   </div>
+
+   <style>
+    .miniPreview {
+     width : 95px;
+     height : 120px;
+     margin : 5px;
+     float : left;
+     border: 1px solid #ccc;
+     display: flex;
+     justify-content: center;
+     background-color:#eee;
+    }
+    .miniPreviewImg {
+     display: block;
+     margin: auto;
+     padding: 15px;
+     max-width : 95px;
+     max-height: 120px;
+    }
+    .miniPreview:hover {
+     background-color:#c0c0c0;
+     border: 1px solid #000;
+    }
+    .miniPreviewImg:hover {
+    }
+   </style>
+  </div><!-- /main -->
+
+  <div id="Panel_View" data-role="panel" data-position-fixed="true" data-display="reveal" data-position="right">
+   <ul data-role="listview" style="padding-left:10px">
+
+    <li data-icon="back" data-theme="b" title="Cerrar Panel  ( Esc )"
+     ><a data-rel="close" name="Panel_View_option1" href="#"
+     >Menú</a></li>
+
+    <li title="En conexiones lentas puede que no se cargen todas las imagenes." data-icon="camera"
+     ><a data-rel="close" name="Panel_View_LoadIm" href="javascript:reLoadImages()"
+     >Cargar Imagenes</a></li>
+
+    <li title="Imprimir en formato de texto plano" data-icon="bullets"
+     ><a data-rel="close" name="Panel_View_printText" href="#" onclick="print_eMails('text/plain')"
+     >Imprimir texto plano</a></li>
+
+    <li title="Imprimir en texto Simple para facilidad de lectura" data-icon="bullets"
+     ><a data-rel="close" name="Panel_View_printCont" href="#" onclick="print_eMails('text/content')"
+     >Imprimir contenido</a></li>
+
+    <li title="Ayuda al Usuario" data-icon="info"
+     ><a data-rel="close" name="Panel_View_Help" href="#EMAIL_View_hlp"
+     >Ayuda</a></li>
+
+   </ul>
+
+  </div><!-- /panel -->
+
+  <div data-role="footer" data-position="fixed" data-tap-toggle="false" data-theme="b">
+
+   <div data-role="navbar">
+
+    <ul>
+
+     <li><input type="button" name="prnMail" data-icon="fa-print" data-iconpos="top" onclick="print_eMails( 'text/html' )" value="Imprimir"></li>
+
+     <li><input type="button" name="fwdMail" data-icon="fa-mail-forward" data-iconpos="top" onclick="Load_eMails_Edit_Mail(  'Fwd:', MID )" value="Reenviar"></li>
+
+     <li><input type="button" name="repMail" data-icon="fa-mail-reply" data-iconpos="top" onclick="Load_eMails_Edit_Mail( 'Re:' , MID )" value="Responder"></li>
+
+     <li><input type="button" name="delMail" data-icon="delete"  data-iconpos="top" onclick="delete_eMails( MID )" value="Eliminar"></li>
+
+    </ul>
+
+   </div><!-- /navbar -->
+
+  </div><!-- /footer -->
+
+ </div><!-- /page EMAIL_View -->
+
+ <div data-role="page" id="EMAIL_Edit_Mail" data-dom-cache="true">
+
+  <div data-role="header" data-position="fixed" data-tap-toggle="false" data-theme="b">
+   <a href="#" data-icon="back" data-iconpos="notext" title="Volver Atras" onclick="KEYS_27();">back</a>
+   <h1>Editor de Correo Electronico</h1>
+   <a href="#Panel_Edit_Mail" data-icon="bars" data-iconpos="notext" title="Menú de Opciones" class="ui-btn-right">Menú</a>
+  </div><!-- /header -->
+
+  <div data-role="main" id="EMAIL_Edit_Mail_main" class="ui-content">
+
+   <form name="EMAIL_Edit_Mail_myForm" action="/cgi-bin/sinfonix_ngz_nc.pl?$sii.system$%20^EMAIL.wwm" method="POST" enctype="multipart/form-data" target="connect9" class="edit_eMails">
+
+    <fieldset data-role="controlgroup" data-mini="true">
+     <table style="width:100%" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+       <td style="width:1px">De</td>
+       <td><input id="edit_eMail_From"      placeholder="From" readonly></td></tr>
+      <tr>
+       <td style="width:1px">Para</td>
+       <td><input name="edit_eMail_To"      placeholder="Destinatarios"></td></tr>
+      <tr>
+      <tr style="display:none" class="edit_eMail_Cc">
+       <td style="width:1px">Cc</td>
+       <td><input name="edit_eMail_Cc"      placeholder="Enviar Copias a"></td></tr>
+      <tr>
+      <tr style="display:none" class="edit_eMail_Bcc">
+       <td style="width:1px">Bcc</td>
+       <td><input name="edit_eMail_Bcc"     placeholder="Enviar Copias (Oculta) a"></td></tr>
+      <tr>
+       <td style="width:1px">Asunto&nbsp;</td>
+       <td><input name="edit_eMail_Subject" placeholder="Subject" readonly></td></tr>
+     </table>
+    </fieldset>
+
+    <div style="background-color: #fff; border: 1px solid #f0f0f0;" class="ui-input-text ui-body-inherit ui-corner-all ui-shadow-inset">
+     <textarea name="edit_eMail_Message">
+     </textarea >
+
+     <div id="Attachments" style="display:none">
+      <br><b>Archivos Adjuntos</b><br>
+
+      <div id="inputFiles" style="display:none">
+       <input type="file" name="edit_eMail_Attach" id="Attach_0" multiple onchange="Set_Attachment(this);" onblur="Set_Attachment(this);" class="available">
+      </div>
+     </div>
+    </div>
+
+    <div style="display:none;">
+     <input type="hidden" name="button" value="">
+     <input type="hidden" name="config" value="$config$">
+    </div>
+
+   </form>
+
+  </div><!-- /main -->
+
+  <div id="Panel_Edit_Mail" data-role="panel" data-position-fixed="true" data-display="reveal" data-position="right">
+   <ul data-role="listview" style="padding-left:10px">
+
+    <li data-icon="back" data-theme="b" title="Cerrar Panel  ( Esc )"
+     ><a data-rel="close" name="Panel_Edit_Mail_option1" href="#"
+     >Menú</a></li>
+
+    <li title="Alterna entre Editor Simple y/o Avanzado." data-icon="edit"
+     ><a data-rel="close" name="Panel_Edit_Mail_Editor" href="javascript:toggleEditor()"
+     >Alternar Editor</a></li>
+
+    <li title="Enviar copia o Comuniquese a (Cc:)." data-icon="user"
+     ><a data-rel="close" name="Panel_Edit_Mail_Cc" href="javascript:var z=jQuery( '.edit_eMail_Cc' ); z.toggle(),z.val(''),z.prop('defaultValue','')"
+     >Comuniquese a (Cc:)</a></li>
+
+    <li title="Enviar copia (Oculta) a (Bcc:)." data-icon="user"
+     ><a data-rel="close" name="Panel_Edit_Mail_Cc" href="javascript:var z=jQuery( '.edit_eMail_Bcc' ); z.toggle(),z.val(''),z.prop('defaultValue','')"
+     >Copia oculta a (Bcc:)</a></li>
+
+    <li title="Permite Editar el Asunto." data-icon="comment"
+     ><a data-rel="close" name="Panel_Edit_Mail_Subject" href="javascript:jQuery( '[name=edit_eMail_Subject]' ).prop('readonly',false)"
+     >Editar Asunto</a></li>
+
+    <li title="Ayuda al Usuario" data-icon="info"
+     ><a data-rel="close" name="Panel_Edit_Mail_Help" href="#EMAIL_Edit_Mail_hlp"
+     >Ayuda</a></li>
+
+   </ul>
+
+  </div><!-- /panel -->
+
+  <div data-role="footer" data-position="fixed" data-tap-toggle="false" data-theme="b">
+
+   <div data-role="navbar">
+
+    <ul>
+
+     <li><input type="button" name="attMail" data-icon="fa-paperclip" data-iconpos="top" onclick="Get_Attachment(1);" value="Adjuntar"></li>
+
+     <li><input type="button" name="sndMail" data-icon="check-green" data-iconpos="top" onclick="writeDocument('Acepta','OFF')" value="Enviar"></li>
+
+     <li><input type="button" name="canMail" data-icon="delete-red"  data-iconpos="top" onclick="history.back();" value="Cancelar"></li>
+
+    </ul>
+
+   </div><!-- /navbar -->
+
+  </div><!-- /footer -->
+
+ </div><!-- /page EMAIL_Edit_Mail -->
+
+ <div data-role="page" id="EMAIL_Edit_Account" data-dom-cache="true">
+
+  <div data-role="header" data-position="fixed" data-tap-toggle="false" data-theme="b">
+   <a href="#" data-icon="back" data-iconpos="notext" title="Volver Atras" onclick="KEYS_27();">back</a>
+
+   <h1>Datos de la Cuenta</h1>
+   <a href="#Panel_Edit" data-icon="bars" data-iconpos="notext" title="Menú de Opciones" class="ui-btn-right">Menú</a>
+  </div><!-- /header -->
+
+   <div data-role="main" class="ui-content">
+
+    <form name="myForm" action="javascript:Edit_eMails_update();">
+
+<!-- Campos de Usuario & Contraseña para ser rellenados automaticamente
+     por la opcion "autocomplete" del explorador WEB esta adaptacion se
+     utiliza en formularios donde tenga campos tipo " password " que no 
+     requieran ser rellenados automaticamente -->
+        <div style="display:none" id="autocomplete_none">
+          <input autocomplete="username">
+          <input autocomplete="current-password" type="password">
+        </div>
+<!-- Fin de la Adaptacion -->
+
+     <b>Correo Electronico</b>
+
+     <input name="MAIL_Name" value="$MAIL_Name$" placeholder="Nombre Descriptivo de la Cuenta">
+
+     <input name="MAIL_User" value="$MAIL_User$" placeholder="Direccion de Correo" onchange="selectKnownServer()" autocomplete="email">
+
+     <input name="MAIL_Pswd" value="$MAIL_Pswd$" placeholder="Contraseña" type="password" onkeyup="Show()" autocomplete="new-password">
+
+     <input name="MAIL_Remind" id="MAIL_Remind" value="$MAIL_Remind.Checked=ON$"  type="checkbox">
+     <label for="MAIL_Remind" title="Tildee esta casilla si quiere que el sistema recuerde su contraseña.">Recordar Contraseña</label>
+
+     <br>
+     <b>Configuración</b>
+     <div data-role="collapsibleset">
+
+      <div data-role="collapsible">
+       <h2 name="h2_2" id="h2_2" class="NoUpDate">Correo Entrante</h2>
+
+       <fieldset data-role="controlgroup" data-mini="true">
+        <input type="radio" name="IN_going" id="IMAP" value="$IN_going.Checked=IMAP$"
+        ><label for="IMAP" title="Protocolo nativo para recibir correo electronico.">IMAP</label>
+
+        <input type="radio" name="IN_going" id="POP3" value="$IN_going.Checked=POP3$"
+        ><label for="POP3" title="Protocolo nativo para recibir correo electronico.">POP3</label>
+
+        <table style="width:100%" cellspacing="0" cellpadding="0">
+         <tr>
+          <td style="width:20%">Servidor</td>
+          <td><input name="IN_Host" value="$IN_Host$" placeholder="Host Name"></td>
+         </tr>
+         <tr>
+          <td>Puerto</td>
+          <td><input name="IN_Port" value="$IN_Port$" placeholder="Port ( Default 110 )"></td>
+         </tr>
+         <tr>
+          <td>Cifrado</td>
+          <td><select size="1" name="IN_Encryp" onchange="Show();">
+            <option value="" selected>no requerido (Port 110)</option>
+            <option value="$IN_Encryp.Select=STARTTLS$">STARTTLS (Port 110 / 143)</option>
+            <option value="$IN_Encryp.Select=SSL$"     >SSL/TLS  (Port 993 / 995)</option>
+           </select></td>
+         </tr>
+         <tr>
+          <td>Autenticación&nbsp;</td>
+          <td><select size="1" name="IN_Auth" onchange="Show()">
+            <option value="" selected>no requerido</option>
+            <option value="$IN_Auth.Select=PLAIN$"  >PLAIN   </option>
+            <option value="$IN_Auth.Select=LOGIN$"  >LOGIN   </option>
+            <option value="$IN_Auth.Select=XOAUTH2$">XOAUTH2 </option>
+            <option value="$IN_Auth.Select=XOAUTH$"      disabled>XOAUTH     </option>
+            <option value="$IN_Auth.Select=CRAM$"        disabled>CRAM-MD5   </option>
+            <option value="$IN_Auth.Select=DIGEST$"      disabled>DIGEST-MD5 </option>
+            <option value="$IN_Auth.Select=CLIENTTOKEN$" disabled>PLAIN-CLIENTTOKEN</option>
+            <option value="$IN_Auth.Select=OAUTHBEARER$" disabled>OAUTHBEARER</option>
+           </select></td>
+         </tr>
+         <tr class="IN_USER" style="display:none">
+          <td>Usuario</td>
+          <td><input name="IN_User" value="$IN_User$" placeholder="Opcional" autocomplete="email"></td>
+         </tr>
+         <tr class="IN_USER_disabled" style="display:none">
+          <td>Contraseña</td>
+          <td><input name="IN_Pswd" value="$IN_Pswd$" placeholder="Opcional"  autocomplete="current-password"></td>
+         </tr>
+        </table>
+
+       </fieldset>
+
+      </div>
+
+      <div data-role="collapsible">
+       <h2 name="h2_1" id="h2_1">Correo Saliente</h2>
+
+       <fieldset data-role="controlgroup" data-mini="true">
+        <input type="radio" name="OUT_going" id="SMTP" value="$OUT_going.Checked=SMTP$"
+        ><label for="SMTP" title="Protocolo nativo para envio de correo electronico.">SMTP</label>
+
+        <input type="radio" name="OUT_going" id="SendMail" value="$OUT_going.Checked=SEND$"
+        ><label for="SendMail" title="Aplicacion para envio de correo electronico.">mailsend-go</label>
+
+        <table style="width:100%" cellspacing="0" cellpadding="0" data-mini="true">
+         <tr>
+          <td style="width:20%">Servidor</td>
+          <td><input name="OUT_Host" value="$OUT_Host$" placeholder="Host Name"></td>
+         </tr>
+         <tr>
+          <td>Puerto</td>
+          <td><input name="OUT_Port" value="$OUT_Port$" placeholder="Port ( Default 25 )"></td>
+         </tr>
+         <tr>
+          <td>Cifrado</td>
+          <td><select size="1" name="OUT_Encryp" onchange="Show();">
+            <option value="" selected>no requerido (Port 25)</option>
+            <option value="$OUT_Encryp.Select=STARTTLS$">STARTTLS (Port  25 / 587)</option>
+            <option value="$OUT_Encryp.Select=SSL$"     >SSL/TLS  (Port 465)</option>
+           </select></td>
+         </tr>
+         <tr>
+          <td>Autenticación&nbsp;</td>
+          <td><select size="1" name="OUT_Auth" onchange="Show()">
+            <option value="" selected>no requerido</option>
+            <option value="$OUT_Auth.Select=PLAIN$"  >PLAIN   </option>
+            <option value="$OUT_Auth.Select=LOGIN$"  >LOGIN   </option>
+            <option value="$OUT_Auth.Select=XOAUTH2$">XOAUTH2 </option>
+            <option value="$OUT_Auth.Select=XOAUTH$"      disabled>XOAUTH     </option>
+            <option value="$OUT_Auth.Select=CRAM$"        disabled>CRAM-MD5   </option>
+            <option value="$OUT_Auth.Select=DIGEST$"      disabled>DIGEST-MD5 </option>
+            <option value="$OUT_Auth.Select=CLIENTTOKEN$" disabled>PLAIN-CLIENTTOKEN</option>
+            <option value="$OUT_Auth.Select=OAUTHBEARER$" disabled>OAUTHBEARER</option>
+           </select></td>
+         </tr>
+         <tr class="OUT_USER" style="display:none">
+          <td>Usuario</td>
+          <td><input name="OUT_User" value="$OUT_User$" placeholder="Opcional" autocomplete="email"></td>
+         </tr>
+         <tr class="OUT_USER_disabled" style="display:none">
+          <td>Contraseña</td>
+          <td><input name="OUT_Pswd" value="$OUT_Pswd$" placeholder="Opcional" autocomplete="current-password"></td>
+         </tr>
+        </table>
+
+       </fieldset>
+
+      </div>
+
+      <div data-role="collapsible">
+       <h2 name="h2_3" id="h2_3">Autenticación</h2>
+
+       <fieldset data-role="controlgroup" data-mini="true">
+
+        <table style="width:100%" cellspacing="0" cellpadding="0" data-mini="true">
+         <tr __DELETE_class="AUTH" __DELETE_style="display:none">
+          <td style="width:20%">Cifrado</td>
+          <td><select size="1" name="MAIL_Encryp_Scheme">
+            <option value="" selected>Seleccione</option>
+            <option value="$MAIL_Encryp_Scheme.Select=OPENSSL$">OPENSSL </option>
+            <option value="$MAIL_Encryp_Scheme.Select=GNUTLS$" >GNUTLS  </option>
+            <option value="$MAIL_Encryp_Scheme.Select=SOCKET$" >BBSOCKET</option>
+           </select></td>
+         </tr>
+         <tr class="XOAUTH" style="display:none">
+          <td>xOauth2&nbsp;</td>
+          <td><select size="1" name="MAIL_Auth_Scheme">
+            <option value="">Seleccione</option>
+            <option value="$MAIL_Auth_Scheme.Select=GOOGLE$">Google</option>
+            <option value="$MAIL_Auth_Scheme.Select=HOTMAIL$">MicroSoft</option>
+            <option value="$MAIL_Auth_Scheme.Select=YAHOO$">Yahoo</option>
+            <option value="$MAIL_Auth_Scheme.Select=FB$">FaceBook</option>
+           </select></td>
+         </tr>
+         <tr class="XOAUTH" style="display:none">
+          <td>Token</td>
+          <td><input name="MAIL_XOAUTH_Token" value="$MAIL_XOAUTH_Token$"></td>
+         </tr>
+        </table>
+
+       </fieldset>
+
+      </div>
+
+      <div data-role="collapsible">
+       <h2 name="h2_4" id="h2_4">Avanzado</h2>
+
+       <fieldset data-role="controlgroup" data-mini="true">
+
+        <table style="width:100%" cellspacing="0" cellpadding="0">
+         <tr>
+          <td style="width:65%"
+           ><input type="checkbox" name="MAIL_Verbose" id="MAIL_Verbose" value="$MAIL_Verbose.Checked=ON$" onchange="showInput(this)"
+           ><label for="MAIL_Verbose" title="Activa el modo detallado, se utiliza para Monitorear la Conexión con el Servidor.">Modo Verbose</label></td>
+
+          <td id="div_MAIL_Verbose_option" style="display:none"
+           ><input type="number" name="MAIL_Verbose_Level" value="$MAIL_Verbose_Level$" title="Nivel de Detalle de 1 a 3." placeholder="Nivel" min="1" max="3" data-wrapper-class="controlgroup-textinput ui-btn"></td>
+         </tr>
+        </table>
+        <table style="width:100%" cellspacing="0" cellpadding="0">
+         <tr>
+          <td style="width:65%"
+           ><input type="checkbox" name="MAIL_getMail" id="MAIL_getMail" value="$MAIL_getMail.Checked=ON$" onchange="showInput(this)"
+           ><label for="MAIL_getMail" title="Tiempo para revisar si hay nuevos mensajes.">Revisar Mensajes</label></td>
+
+          <td id="div_MAIL_getMail_option" style="display:none"
+           ><input type="number" name="MAIL_getMail_Time" value="$MAIL_getMail_Time$" title="Tiempo en Minutos." placeholder="Minutos" min="0" max="60" data-wrapper-class="controlgroup-textinput ui-btn"></td>
+         </tr>
+        </table>
+        <table style="width:100%" cellspacing="0" cellpadding="0">
+         <tr>
+          <td style="width:65%"
+           ><input type="checkbox" name="MAIL_Keep" id="MAIL_Keep" value="$MAIL_Keep.Checked=ON$" onchange="showInput(this)"
+           ><label for="MAIL_Keep" title="Mantener copia de los correos en el Servidor al utilizar el protocolo POP3.
+(comando TOP en vez de RETR)">Mantener copia del correo (POP3)</label></td>
+         </tr>
+        </table>
+        <table style="width:100%" cellspacing="0" cellpadding="0">
+         <tr>
+          <td style="width:65%"
+           ><input type="checkbox" name="MAIL_FQDN" id="MAIL_FQDN" value="$MAIL_FQDN.Checked=FQDN$" onchange="showInput(this)"
+           ><label for="MAIL_FQDN" title="Nombre de Dominio Full Calificado (o dirección IP Publica)
+requerido por algunos servidores de correo.">Nombre de Dominio (FQDN)</label></td>
+         </tr>
+         <tr>
+          <td style="display:none">&nbsp;</td>
+         </tr>
+        </table>
+        <table style="width:100%" cellspacing="0" cellpadding="0">
+         <tr id="div_MAIL_FQDN_option" style="display:none">
+          <td><input name="MAIL_FQDN_url" value="$MAIL_FQDN_url$" title="indique la pagina de donde obtener el Nombre de Dominio Full Calificado (o dirección IP Publica)." placeholder="ifconfig.me/all;remote_host: ;ip_addr: ;"></td>
+         </tr>
+        </table>
+
+       </fieldset>
+
+      </div>
+
+     </div>
+    <div style="display:none;">
+     <input type="hidden" name="MAIL_Account" value="$MAIL_Account$" class="NoUpDate">
+     <input type="hidden" name="button" value="" class="NoUpDate">
+     <input type="hidden" name="config" value="$config$" class="NoUpDate">
+     <input type="file"   name="file_upLoad" onchange="printFile(this);" onblur="printFile(this);" class="NoUpDate">
+    </div>
+
+   </form>
+
+  </div><!-- /main -->
+
+  <div id="Panel_Edit" data-role="panel" data-position-fixed="true" data-display="reveal" data-position="right">
+   <ul data-role="listview" style="padding-left:10px">
+
+    <li title="Cerrar Panel  ( Esc )" data-icon="back" data-theme="b"
+     ><a data-rel="close" name="Panel_Edit_option1" href="#"
+     >Menú</a></li>
+
+    <li title="Ayuda al Usuario" data-icon="info"
+     ><a data-rel="close" name="Panel_Edit_Help" href="#EMAIL_Edit_hlp"
+     >Ayuda</a></li>
+
+   </ul>
+
+  </div><!-- /panel -->
+
+  <div data-role="footer" data-position="fixed" data-tap-toggle="false" data-theme="b">
+
+   <div data-role="navbar">
+    <ul>
+
+     <li style="width:100%"><input type="button" name="check"  data-icon="check-green" data-iconpos="right" onclick="submit_ext('Acepta')"  value="Actualiza" title="Actualiza la Cuenta  ( Ctrl + G )"></li>
+
+     <li style="display:none"><input type="button" name="delete" data-icon="delete-red"  data-iconpos="right" onclick="submit_ext('Elimina')" value="Elimina"   title="Elimina la Cuenta  ( Ctrl + E )"></li>
+    </ul>
+
+   </div><!-- /navbar -->
+
+  </div><!-- /footer -->
+
+  <style>
+  .controlgroup-textinput {
+    padding-top:.09em;
+    padding-bottom:.10em;
+  }
+  </style>
+
+ </div><!-- /page EMAIL_Edit -->
+
+ <div data-role="page" id="EMAIL_hlp" data-dom-cache="true">
+
+  <div data-role="header" data-position="fixed" data-tap-toggle="false" data-theme="b">
+   <a href="#" data-icon="back" data-iconpos="notext" title="Volver Atras" onclick="KEYS_27();">back</a>
+   <h1>fwMail</h1>
+   <a href="#" data-icon="info" data-iconpos="notext" title="Ayuda al Usuario" onclick="KEYS_27();">back</a>
+  </div><!-- /header -->
+
+  <div data-role="main" class="ui-content">
+   <h1><i><font face="Times New Roman"><b>Ayuda</b></font></i></h1>
+
+   <p><i><font face="Times New Roman"><b>fwMail</b></font></i> es una <b>app WEB</b> desarrollada con <i><font face="Times New Roman"><b>fwBasic</b></font></i>, diseñada como alternativa a los <b>clientes de correo WEB</b> tales como: <a href="http://www.gmail.com">gmail</a>, <a href="http://www.hotmail.com">hotmail</a>, <a href="http://www.yahoo.com">yahoo</a>, etc., con la diferencia que <i><font face="Times New Roman"><b>fwMail</b></font></i> puede agrupar a todos ellos en un solo <b>cliente de correo WEB</b>.</p>
+
+   <p>Actualmente soporta los protocolos <a href="https://es.wikipedia.org/wiki/Protocolo_de_oficina_de_correo" target="_blank">POP3</a>, <a href="https://es.wikipedia.org/wiki/Protocolo_para_transferencia_simple_de_correo" target="_blank">SMTP</a> e <a href="https://es.wikipedia.org/wiki/Protocolo_de_acceso_a_mensajes_de_Internet" target="_blank">IMAP</a>. Es parte integral del <b>Tutorial de <i><font face="Times New Roman">fwBasic</font></i></b>, fue creada para profundizar un poco más en el lenguaje y con la intención de mostrar a los entusiasta de <i><font face="Times New Roman"><b>fwBasic</b></font></i> como se puede interactuar con servidores de Correo desde <b>Business Basic</b></p>
+
+   <p>Además de los protocolos mencionados, también soporta la aplicación <b><a href="https://github.com/muquit/mailsend-go" target="_blank">mailsend-go</a></b> como alternativa al protocolo <b>SMTP</b>, es una herramienta de línea de comandos para <b>Windows</b> y <b>Linux</b> muy poderosa!, permite el envío de correo electrónico con soporte para <b>texto enriquecido</b>, <b>imágenes</b>, <b>archivos adjuntos</b>, Etc. y además soporta el protocolo <b>SSL</b> lo cual es un requisito indispensable para el acceso a los servidores de correo que existen actualmente (<b>gmail</b>, <b>hotmail</b>, <b>yahoo</b>, Etc.).</p>
+
+   <p>Si deseas participar en el proyecto escríbenos a <a href="mailto://ingenix21@gmail.com" target="_blank">ingenix21@gmail.com</a>, una muy buena contribución al comienzo es explotar la aplicación en busca de errores así como desarrollar parte de la ayuda de las diferentes secciones que componen la aplicación.</p>
+
+   <p>Recibirás una copia de la aplicación final (ejecutables y programas fuentes) y una mención especial en la sección de Desarrolladores!.</p>
+  </div><!-- /main -->
+
+ </div><!-- /page EMAIL_hlp -->
+
+ <div data-role="page" id="EMAIL_Box_hlp" data-dom-cache="true">
+
+  <div data-role="header" data-position="fixed" data-tap-toggle="false" data-theme="b">
+   <a href="#" data-icon="back" data-iconpos="notext" title="Volver Atras" onclick="KEYS_27();">back</a>
+   <h1>Bandeja de Entrada</h1>
+   <a href="#" data-icon="info" data-iconpos="notext" title="Ayuda al Usuario" onclick="KEYS_27();">back</a>
+  </div><!-- /header -->
+
+  <div data-role="main" class="ui-content">
+
+  </div><!-- /main -->
+
+ </div><!-- /page EMAIL_Box_hlp -->
+
+ <div data-role="page" id="EMAIL_List_hlp" data-dom-cache="true">
+
+  <div data-role="header" data-position="fixed" data-tap-toggle="false" data-theme="b">
+   <a href="#" data-icon="back" data-iconpos="notext" title="Volver Atras" onclick="KEYS_27();">back</a>
+   <h1>Bandeja de Entrada</h1>
+   <a href="#" data-icon="info" data-iconpos="notext" title="Ayuda al Usuario" onclick="KEYS_27();">back</a>
+  </div><!-- /header -->
+
+  <div data-role="main" class="ui-content">
+
+  </div><!-- /main -->
+
+ </div><!-- /page EMAIL_List_hlp -->
+
+ <div data-role="page" id="EMAIL_View_hlp" data-dom-cache="true">
+
+  <div data-role="header" data-position="fixed" data-tap-toggle="false" data-theme="b">
+   <a href="#" data-icon="back" data-iconpos="notext" title="Volver Atras" onclick="KEYS_27();">back</a>
+   <h1>Mensajes</h1>
+   <a href="#" data-icon="info" data-iconpos="notext" title="Ayuda al Usuario" onclick="KEYS_27();">back</a>
+  </div><!-- /header -->
+
+  <div data-role="main" class="ui-content">
+
+  </div><!-- /main -->
+
+ </div><!-- /page EMAIL_View_hlp -->
+
+ <div data-role="page" id="EMAIL_Edit_hlp" data-dom-cache="true">
+
+  <div data-role="header" data-position="fixed" data-tap-toggle="false" data-theme="b">
+   <a href="#" data-icon="back" data-iconpos="notext" title="Volver Atras" onclick="KEYS_27();">back</a>
+   <h1>Datos de la Cuenta</h1>
+   <a href="#" data-icon="info" data-iconpos="notext" title="Ayuda al Usuario" onclick="KEYS_27();">back</a>
+  </div><!-- /header -->
+
+  <div data-role="main" class="ui-content">
+
+  </div><!-- /main -->
+
+ </div><!-- /page EMAIL_Edit_hlp -->
+
+<!--sii.load jqm_footer -->
+<script src="../js/jquery/plugin/summernote/summernote-lite.min.js?version=1.67"></script>
+<script src="../js/eMailParser.js?version=1.67"></script>
+
+<!-- Fuerza el Juego de Caracteres UTF-8 en los eMails -->
+<script>jQuery.ajaxSettings.mimeType="*/*; charset=UTF-8";</script>
+
+</html>
